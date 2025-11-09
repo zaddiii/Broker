@@ -1,0 +1,82 @@
+
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KronosFX Dashboard</title>
+<style>
+  body{
+    font-family:Poppins,system-ui,Arial;
+    background:linear-gradient(180deg,#050b16,#0a1328);
+    color:#eaf3ff;margin:0;padding:0;
+  }
+  header{
+    background:#0e1730;
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .brand{font-weight:700;font-size:18px;}
+  .pill{background:#1e90ff;color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;}
+  .prices{display:flex;flex-direction:column;align-items:center;margin-top:30px;}
+  button{margin:6px;padding:10px 18px;border:0;border-radius:8px;cursor:pointer;font-weight:700;}
+  .buy{background:#22c55e;color:#fff;}
+  .sell{background:#ef4444;color:#fff;}
+  .logout{background:#374151;color:#fff;}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">KronosFX</div>
+  <div id="userInfo" class="pill"></div>
+</header>
+
+<div class="prices">
+  <h2>BTC/USDT</h2>
+  <div id="price" style="font-size:28px;margin:10px 0;">Loading...</div>
+  <div>
+    <button class="buy" onclick="buy()">Buy</button>
+    <button class="sell" onclick="sell()">Sell</button>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+  <div id="status" style="margin-top:10px;font-size:14px;"></div>
+</div>
+
+<script>
+const userRaw = localStorage.getItem("user");
+if(!userRaw) window.location.href="index.html";
+const user = JSON.parse(userRaw);
+document.getElementById("userInfo").textContent = user.email.split("@")[0];
+
+async function fetchPrice(){
+  try {
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
+    const data = await res.json();
+    document.getElementById("price").textContent = "$" + data.bitcoin.usd.toLocaleString();
+  } catch {
+    document.getElementById("price").textContent = "Error fetching";
+  }
+}
+fetchPrice();
+setInterval(fetchPrice,5000);
+
+function buy(){
+  document.getElementById("status").textContent = "✅ Bought BTC successfully (Demo)";
+}
+function sell(){
+  document.getElementById("status").textContent = "❌ Sold BTC successfully (Demo)";
+}
+function logout(){
+  localStorage.removeItem("user");
+  window.location.href="index.html";
+}
+</script>
+</body>
+</html>
