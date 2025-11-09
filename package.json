@@ -3,8 +3,9 @@
 
 
 {
-  "name": "simple-broker",
+  "name": "kronos-auth-backend",
   "version": "1.0.0",
+  "description": "Simple broker backend with buy/sell demo and authentication routes",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -12,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^1.7.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.0",
     "express": "^4.19.0"
   }
