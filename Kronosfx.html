@@ -1,0 +1,98 @@
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register — Kronos Demo</title>
+  <style>
+    :root{
+      --bg:#071022;
+      --card:#0b1220;
+      --muted:#98a0b3;
+      --accent:#1e90ff;
+      --accent-2:#59d1ff;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;color:#eaf3ff;background:linear-gradient(180deg,var(--bg),#030417);display:flex;align-items:center;justify-content:center}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:12px;min-width:320px;box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03);text-align:center}
+    h1{margin:0 0 12px 0;font-size:18px}
+    .muted{color:var(--muted);font-size:13px;margin-bottom:16px}
+    button{appearance:none;border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#061024}
+    form{margin-top:14px;display:none;flex-direction:column;gap:10px;align-items:stretch}
+    input{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#eaf3ff;outline:none}
+    .small{font-size:13px;color:var(--muted)}
+    .status{margin-top:10px;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Register for Kronos Demo</h1>
+    <div class="muted">Create an account to try the demo broker</div>
+
+    <!-- Register button (only visible control initially) -->
+    <button id="showRegisterBtn">Register</button>
+
+    <!-- Inline registration form (hidden until register button clicked) -->
+    <form id="registerForm" autocomplete="off">
+      <input type="email" id="email" placeholder="Email address" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit" id="submitBtn">Create account</button>
+      <div class="status" id="status"></div>
+    </form>
+
+    <div style="margin-top:10px" class="small">Already have an account? Use the login page later.</div>
+  </div>
+
+  <script>
+    // Replace this with your deployed backend URL (no trailing slash)
+    const BACKEND_BASE = "https://your-backend.onrender.com";
+
+    const showBtn = document.getElementById('showRegisterBtn');
+    const form = document.getElementById('registerForm');
+    const statusEl = document.getElementById('status');
+
+    showBtn.addEventListener('click', () => {
+      // Hide the single Register button and show the inline form
+      showBtn.style.display = 'none';
+      form.style.display = 'flex';
+      document.getElementById('email').focus();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = 'Creating account...';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch(BACKEND_BASE + '/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          statusEl.style.color = '#fb7185'; // red
+          statusEl.textContent = data.message || 'Registration failed';
+          return;
+        }
+
+        statusEl.style.color = '#7dd3fc'; // teal
+        statusEl.textContent = data.message || 'Account created';
+
+        // Optionally auto-redirect to dashboard or login after a short pause:
+        // setTimeout(() => window.location.href = '/dashboard.html', 900);
+      } catch (err) {
+        console.error(err);
+        statusEl.style.color = '#fb7185';
+        statusEl.textContent = 'Network error — could not reach backend';
+      }
+    });
+  </script>
+</body>
+</html>
